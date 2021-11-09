@@ -8,20 +8,20 @@
 import UIKit
 
 protocol ConfigViewControllerDelegate {
-    func setColorStartingView(for background: UIColor)
+    func setColorStartingView(_ background: UIColor)
 }
 
 class StartingViewController: UIViewController {
-  
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     let configVC = segue.destination as! ConfigViewController
-        configVC.colorFromView = view.backgroundColor
+        guard let configVC = segue.destination as? ConfigViewController else { return }
         configVC.delegate = self
+        configVC.colorFromView = view.backgroundColor
     }
 }
 
 extension StartingViewController: ConfigViewControllerDelegate {
-    func setColorStartingView(for background: UIColor) {
+    func setColorStartingView(_ background: UIColor) {
         view.backgroundColor = background
     }
 }

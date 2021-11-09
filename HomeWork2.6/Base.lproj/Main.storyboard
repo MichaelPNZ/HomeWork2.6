@@ -22,7 +22,7 @@
                     <navigationItem key="navigationItem" id="3Wi-NN-lUL">
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="88d-py-KPP">
                             <connections>
-                                <segue destination="BYZ-38-t0r" kind="presentation" modalPresentationStyle="fullScreen" id="o7N-cf-75r"/>
+                                <segue destination="BYZ-38-t0r" kind="presentation" modalPresentationStyle="fullScreen" id="sBF-hZ-hUc"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -108,19 +108,19 @@
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="bOX-oM-Srr">
                                                 <rect key="frame" x="-2" y="0.0" width="223" height="31"/>
                                                 <connections>
-                                                    <action selector="redSliderAction" destination="BYZ-38-t0r" eventType="valueChanged" id="fIZ-ux-H7I"/>
+                                                    <action selector="rgbSliders:" destination="BYZ-38-t0r" eventType="valueChanged" id="5Kf-mA-cJi"/>
                                                 </connections>
                                             </slider>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="z1F-7f-wfG">
                                                 <rect key="frame" x="-2" y="38" width="223" height="31"/>
                                                 <connections>
-                                                    <action selector="greenSliderAction" destination="BYZ-38-t0r" eventType="valueChanged" id="cj8-OL-OXU"/>
+                                                    <action selector="rgbSliders:" destination="BYZ-38-t0r" eventType="valueChanged" id="mPd-dL-NF2"/>
                                                 </connections>
                                             </slider>
                                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="cm9-zq-bXH">
                                                 <rect key="frame" x="-2" y="76" width="223" height="31"/>
                                                 <connections>
-                                                    <action selector="blueSliderAction" destination="BYZ-38-t0r" eventType="valueChanged" id="tG2-B1-CLL"/>
+                                                    <action selector="rgbSliders:" destination="BYZ-38-t0r" eventType="valueChanged" id="0c5-gT-46Z"/>
                                                 </connections>
                                             </slider>
                                         </subviews>
@@ -131,29 +131,35 @@
                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SMm-8E-S66">
                                                 <rect key="frame" x="0.0" y="0.0" width="45" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="decimalPad" returnKeyType="done"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="doneAccessory" value="YES"/>
                                                 </userDefinedRuntimeAttributes>
                                                 <connections>
-                                                    <action selector="redTextFieldAction:" destination="BYZ-38-t0r" eventType="editingDidEnd" id="73N-D3-0Qx"/>
+                                                    <outlet property="delegate" destination="BYZ-38-t0r" id="gAL-c3-OCc"/>
                                                 </connections>
                                             </textField>
                                             <textField opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Zp9-hf-zOC">
                                                 <rect key="frame" x="0.0" y="36" width="45" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="decimalPad" returnKeyType="done"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="doneAccessory" value="YES"/>
                                                 </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <outlet property="delegate" destination="BYZ-38-t0r" id="k97-zs-JwE"/>
+                                                </connections>
                                             </textField>
                                             <textField opaque="NO" tag="2" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="uNg-qF-Hmw">
                                                 <rect key="frame" x="0.0" y="72" width="45" height="34"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
+                                                <textInputTraits key="textInputTraits" keyboardType="decimalPad" returnKeyType="done"/>
                                                 <userDefinedRuntimeAttributes>
                                                     <userDefinedRuntimeAttribute type="boolean" keyPath="doneAccessory" value="YES"/>
                                                 </userDefinedRuntimeAttributes>
+                                                <connections>
+                                                    <outlet property="delegate" destination="BYZ-38-t0r" id="tqw-8Z-vvY"/>
+                                                </connections>
                                             </textField>
                                         </subviews>
                                         <constraints>
@@ -173,7 +179,6 @@
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="doneButtonPressed" destination="BYZ-38-t0r" eventType="touchUpInside" id="FJt-hb-gl5"/>
-                                    <segue destination="KW7-iB-Ys4" kind="unwind" unwindAction="unwindFor:" id="i1h-Y4-dqz"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -206,7 +211,6 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
-                <exit id="KW7-iB-Ys4" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="989.85507246376824" y="53.571428571428569"/>
         </scene>

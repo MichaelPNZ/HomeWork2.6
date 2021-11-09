@@ -9,6 +9,8 @@ import UIKit
 
 class ConfigViewController: UIViewController {
     
+    @IBOutlet var colorView: UIView!
+    
     @IBOutlet var redLabel: UILabel!
     @IBOutlet var greenLabel: UILabel!
     @IBOutlet var blueLabel: UILabel!
@@ -21,14 +23,12 @@ class ConfigViewController: UIViewController {
     @IBOutlet var greenTextField: UITextField!
     @IBOutlet var blueTextField: UITextField!
     
-    @IBOutlet var colorView: UIView!
-    
     var delegate: ConfigViewControllerDelegate!
     var colorFromView: UIColor!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-      
+        
         colorView.layer.cornerRadius = 10
         
         redSlider.minimumTrackTintColor = .red
@@ -36,165 +36,141 @@ class ConfigViewController: UIViewController {
         
         colorView.backgroundColor = colorFromView
         
-        addDoneButtonTo(redTextField)
-        addDoneButtonTo(greenTextField)
-        addDoneButtonTo(blueTextField)
-        
-        changeColor()
-        setValue(for: redLabel, greenLabel, blueLabel, and: redTextField, greenTextField, blueTextField)
-    }
-
-    @IBAction func redSliderAction() {
-        changeColor()
-        setValue(for: redLabel, and: redTextField)
+        setSladers()
+        setValue(redLabel, greenLabel, blueLabel)
+        setValue(redTextField, greenTextField, blueTextField)
     }
     
-    @IBAction func greenSliderAction() {
+    @IBAction func rgbSliders(_ sender: UISlider) {
+        switch sender {
+        case redSlider:
+            setValue(redLabel)
+            setValue(redTextField)
+        case greenSlider:
+            setValue(greenLabel)
+            setValue(greenTextField)
+        default:
+            setValue(blueLabel)
+            setValue(blueTextField)
+            
+        }
         changeColor()
-        setValue(for: greenLabel, and: greenTextField)
-    }
-    
-    @IBAction func blueSliderAction() {
-        changeColor()
-        setValue(for: blueLabel, and: blueTextField)
-    }
-    
-    @IBAction func redTextFieldAction(_ sender: UITextField) {
-        
     }
     
     @IBAction func doneButtonPressed() {
-        delegate.setColorStartingView(for: UIColor(displayP3Red: CGFloat(redSlider.value),
-                                                   green: CGFloat(greenSlider.value),
-                                                   blue: CGFloat(blueSlider.value),
-                                                   alpha: 1))
+        delegate?.setColorStartingView(colorView.backgroundColor ?? .white)
         dismiss(animated: true)
     }
     
-    func changeColor() {
-        colorView.backgroundColor = UIColor(displayP3Red: CGFloat(redSlider.value),
-                                            green: CGFloat(greenSlider.value),
-                                            blue: CGFloat(blueSlider.value),
-                                            alpha: 1)
+}
+extension ConfigViewController {
+    
+    private func changeColor() {
+        colorView.backgroundColor = UIColor(
+            displayP3Red: CGFloat(redSlider.value),
+            green: CGFloat(greenSlider.value),
+            blue: CGFloat(blueSlider.value),
+            alpha: 1)
     }
     
-    private func setValue(for labels: UILabel..., and textFields: UITextField...) {
+    private func setValue(_ labels: UILabel...) {
         labels.forEach { label in
             switch label {
             case redLabel:
-                redLabel.text = string(from: redSlider)
+                label.text = string(from: redSlider)
             case greenLabel:
-                greenLabel.text = string(from: greenSlider)
+                label.text = string(from: greenSlider)
             default:
-                blueLabel.text = string(from: blueSlider)
+                label.text = string(from: blueSlider)
             }
         }
-        
-        textFields.forEach {
-            textField in
+    }
+    
+    private func setValue(_ textFields: UITextField...) {
+        textFields.forEach {textField in
             switch textField {
             case redTextField:
-                redTextField.text = string(from: redSlider)
+                textField.text = string(from: redSlider)
             case greenTextField:
-                greenTextField.text = string(from: greenSlider)
+                textField.text = string(from: greenSlider)
             default:
-                blueTextField.text = string(from: blueSlider)
+                textField.text = string(from: blueSlider)
             }
         }
+    }
+    
+    private func setSladers() {
+        let ciColor = CIColor(color: colorFromView)
+        
+        redSlider.value = Float(ciColor.red)
+        greenSlider.value = Float(ciColor.green)
+        blueSlider.value = Float(ciColor.blue)
     }
     
     private func string(from slider: UISlider) -> String {
         String(format: "%.2f", slider.value)
     }
     
+    @objc private func didTapDone() {
+        view.endEditing(true)
+    }
+    
+    private func showAlert(title: String, messege: String) {
+        let alert = UIAlertController(title: title, message: messege, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+    
 }
 
 extension ConfigViewController: UITextFieldDelegate {
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        view.endEditing(true)
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
         
-        // Скрываем клавиатуру нажатием на "Done"
-        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-            textField.resignFirstResponder()
-            return true
-        }
+        guard let text = textField.text else { return }
         
-        func textFieldDidEndEditing(_ textField: UITextField) {
-            
-            guard let text = textField.text else { return }
-            
-            if let currentValue = Float(text) {
-                
-                switch textField.tag {
-                case 0: redSlider.value = currentValue
-                case 1: greenSlider.value = currentValue
-                case 2: blueSlider.value = currentValue
-                default: break
-                }
-
-                changeColor()
+        if let currentValue = Float(text) {
+            switch textField {
+            case redTextField:
+                redSlider.setValue(currentValue, animated: true)
+                setValue(redLabel)
+            case greenTextField:
+                greenSlider.setValue(currentValue, animated: true)
+                setValue(greenLabel)
+            default:
+                blueSlider.setValue(currentValue, animated: true)
+                setValue(blueLabel)
             }
+            changeColor()
+            return
         }
+        showAlert(title: "Wrong format!", messege: "Please enter correct value")
     }
-
-    extension ConfigViewController {
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         
-        // Метод для отображения кнопки "Готово" на цифровой клавиатуре
-        private func addDoneButtonTo(_ textField: UITextField) {
-            
-            let numberToolbar = UIToolbar()
-            textField.inputAccessoryView = numberToolbar
-            numberToolbar.sizeToFit()
-            
-            let doneButton = UIBarButtonItem(title:"Done",
-                                             style: .done,
-                                             target: self,
-                                             action: #selector(didTapDone))
-            
-            let flexBarButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace,
-                                                target: nil,
-                                                action: nil)
-            
-            
-            
-            numberToolbar.items = [flexBarButton, doneButton]
-            
-        }
+        let numberToolbar = UIToolbar()
+        numberToolbar.sizeToFit()
+        textField.inputAccessoryView = numberToolbar
         
-        @objc private func didTapDone() {
-            view.endEditing(true)
-        }
+        let doneButton = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(didTapDone)
+        )
+        
+        let flexBarButton = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: nil,
+            action: nil)
+        
+        numberToolbar.items = [flexBarButton, doneButton]
     }
+}
 
-
-//extension UITextField{
-//
-//        @IBInspectable var doneAccessory: Bool{
-//            get{
-//                return self.doneAccessory
-//            }
-//            set (hasDone) {
-//                if hasDone{
-//                    addDoneButtonOnKeyboard()
-//                }
-//            }
-//        }
-//
-//        func addDoneButtonOnKeyboard()
-//        {
-//            let doneToolbar: UIToolbar = UIToolbar(frame: CGRect.init(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
-//            doneToolbar.barStyle = .default
-//
-//            let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-//            let done: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(self.doneButtonAction))
-//
-//            let items = [flexSpace, done]
-//            doneToolbar.items = items
-//            doneToolbar.sizeToFit()
-//
-//            self.inputAccessoryView = doneToolbar
-//        }
-//
-//        @objc func doneButtonAction() {
-//            self.resignFirstResponder()
-//        }
-//
-//    }
